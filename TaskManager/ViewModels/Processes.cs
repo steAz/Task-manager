@@ -17,7 +17,30 @@ namespace TaskManager.ViewModels
     {
         public ObservableCollection<Process> Processes { get; set; }
 
-        private string _LastName = null;
+        private bool _IsListBoxModulesVisible;
+        private bool _IsListBoxThreadsVisible;
+
+        public bool IsListBoxModulesVisible
+        {
+            get { return _IsListBoxModulesVisible; }
+            set
+            {
+                _IsListBoxModulesVisible = value;
+                OnPropertyChanged("IsListBoxModulesVisible");
+            }
+        }
+
+        public bool IsListBoxThreadsVisible
+        {
+            get { return _IsListBoxThreadsVisible; }
+            set
+            {
+                _IsListBoxThreadsVisible = value;
+                OnPropertyChanged("IsListBoxThreadsVisible");
+            }
+        }
+
+        //private string _LastName = null;
 
         //public ICommand ContextMenuOpeningCommand
         //{
@@ -57,11 +80,34 @@ namespace TaskManager.ViewModels
         public void ShowModulesExecute(object parameter)
         {
 
-            MessageBox.Show("xd");
             if (parameter != null)
             {
                 var process = (Process)parameter;
-                MessageBox.Show(process.ProcessName);
+                IsListBoxModulesVisible = true;
+                
+            }
+        }
+
+        public ICommand ShowThreadsCommand { get; set; }
+
+        private bool CanExecuteShowThreadsCommand(object parameter)
+        {
+            return true;
+        }
+
+        private void CreateShowThreadsCommand()
+        {
+            ShowThreadsCommand = new RelayCommand<object>(ShowThreadsExecute, CanExecuteShowThreadsCommand);
+        }
+
+        public void ShowThreadsExecute(object parameter)
+        {
+
+            if (parameter != null)
+            {
+                var process = (Process)parameter;
+                IsListBoxThreadsVisible = true;
+
             }
         }
 
@@ -70,19 +116,22 @@ namespace TaskManager.ViewModels
         public ProcessesViewModel()
         {
             CreateShowModulesCommand();
+            CreateShowThreadsCommand();
             this.Processes = new ObservableCollection<Process>();
         }
 
         public void SetAllProcesses()
         {
             this.Processes = new ObservableCollection<Process>(Process.GetProcesses().ToList());
+
             //foreach (var process in Processes)
             //{
             //    ProcessModuleCollection myProcessModuleCollection = process.Modules;
-            //    foreach (var module in process.Modules)
-            //    {
-            //        ProcessModule x = (ProcessModule) module;
-            //    }
+            //    foreach (var module in process.Threads)
+            //{
+            //    ProcessThread x = (ProcessThread)module;
+            //        x.
+            //}
             //}
 
         }

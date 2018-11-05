@@ -10,13 +10,13 @@
         mc:Ignorable="d"
         Title="List of processes window" 
         
-        Background="Gray" >
+        Background="Gray" Width="889" >
     <Window.Resources>
         <viewModels:ProcessesViewModel x:Key="vm"/>
     </Window.Resources>
 
-    <DockPanel Name="DockPanelProcesses">
-        <Grid DataContext="{ Binding Processes}">
+    <DockPanel Name="DockPanelProcesses" DataContext="{ Binding Processes}">
+        <Grid >
             <Label Margin="24,0,0,476">System processes</Label>
             <ListBox Name="ListBoxProcesses" ItemsSource="{Binding }" 
                      DisplayMemberPath="ProcessName"
@@ -26,12 +26,13 @@
         </Grid>
 
 
-        <Grid DataContext="{ Binding Processes}" Width="252" >
-            <Label Content="Selected process:" Margin="10,0,137,472" RenderTransformOrigin="0.5,0.5"/>
-            <Label FontWeight="Bold" Content="{Binding ProcessName}" Margin="120,0,10,472" RenderTransformOrigin="0.5,0.5">
+        <Grid Width="252" >
+
+            <Label Content="Selected process:" Margin="10,0,137,472" />
+            <Label FontWeight="Bold" Content="{Binding ProcessName}" Margin="120,0,10,472" >
             </Label>
             <ListBox  ItemsSource="{Binding Processes}"
-                      IsSynchronizedWithCurrentItem="true" RenderTransformOrigin="0.5,0.5" Margin="9,37,10,320" >
+                      IsSynchronizedWithCurrentItem="true" Margin="9,32,10,263" >
                 <!--<ListBox.ItemTemplate>
                 <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -43,7 +44,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>-->
                 <TextBlock Text ="{Binding Path=Id,StringFormat='Id: {0}'}">
-                     
+
                 </TextBlock>
                 <TextBlock Text="{Binding Path=WorkingSet64, StringFormat='Physical memory usage: {0}'}" />
                 <TextBlock Text ="{Binding Path=BasePriority,StringFormat='Base priority: {0}'}"/>
@@ -53,24 +54,82 @@
                 <TextBlock Text ="{Binding Path=TotalProcessorTime,StringFormat='Total processor time: {0}'}"/>
                 <TextBlock Text ="{Binding Path=PagedSystemMemorySize64,StringFormat='PagedSystemMemorySize64: {0}'}"/>
                 <TextBlock Text ="{Binding Path=PagedMemorySize64,StringFormat='PagedMemorySize64: {0}'}">
-                    
+
                 </TextBlock>
-                <ListBoxItem d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True,
-             Type=viewModels:ProcessesViewModel}" Background="Black">
+                <ListBoxItem d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=viewModels:ProcessesViewModel}" 
+                             Background="Black">
                     <local:CommandControl Command="{Binding ShowModulesCommand, Source={StaticResource vm}}"
-                        CommandParameter="{Binding ElementName=ListBoxProcesses, Path=SelectedItem}">
-                        <TextBlock Text="Home" Margin="0,0,0,5" VerticalAlignment="Center"
-                   Foreground="White" FontSize="24" />
+                                          CommandParameter="{Binding ElementName=ListBoxProcesses, Path=SelectedItem}">
+                        <TextBlock Text="Show modules" Foreground="White"  />
                     </local:CommandControl>
                 </ListBoxItem>
-                
+                <ListBoxItem d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=viewModels:ProcessesViewModel}" 
+                             Background="Black">
+                    <local:CommandControl Command="{Binding ShowThreadsCommand, Source={StaticResource vm}}"
+                                          CommandParameter="{Binding ElementName=ListBoxProcesses, Path=SelectedItem}">
+                        <TextBlock Text="Show threads" Foreground="White"  />
+                    </local:CommandControl>
+                </ListBoxItem>
+
 
             </ListBox>
         </Grid >
-        <ListBox ItemsSource="{Binding Path=Modules}"
-                      IsSynchronizedWithCurrentItem="true" DisplayMemberPath="ToString()" RenderTransformOrigin="0.5,0.5" Margin="9,37,10,320" Width="84"/>
-        <Grid >
-           
+        <Grid Width="162" >
+            <Grid.Resources>
+                <BooleanToVisibilityConverter x:Key="boolToVisOfLiBoxModulesConverter"/>
+            </Grid.Resources>
+            <ListBox Name ="ListBoxModules"
+                 ItemsSource="{Binding Path=Modules}" 
+                 Visibility="{Binding IsListBoxModulesVisible, 
+                                Converter={StaticResource boolToVisOfLiBoxModulesConverter}, 
+                                Source={StaticResource vm}}"
+                 IsSynchronizedWithCurrentItem="true" 
+                 DisplayMemberPath="ModuleName" 
+                 Margin="0,32,7,156"/>
+            <Label Content="Selected process's modules" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Top" 
+                   Height="32"
+                   Visibility="{Binding IsListBoxModulesVisible, 
+                                Converter={StaticResource boolToVisOfLiBoxModulesConverter}, 
+                                Source={StaticResource vm}}"
+                   /> 
         </Grid>
+
+        <Grid Width="156">
+            <Grid.Resources>
+                <BooleanToVisibilityConverter x:Key="boolToVisOfLiBoxThreadsConverter"/>
+            </Grid.Resources>
+            <ListBox Name ="ListBoxThreads"
+                 ItemsSource="{Binding Path=Threads}"          
+                 IsSynchronizedWithCurrentItem="true" 
+                 Margin="0,31,0,163"
+                 Visibility="{Binding IsListBoxThreadsVisible, 
+                                Converter={StaticResource boolToVisOfLiBoxThreadsConverter}, 
+                                Source={StaticResource vm}}" 
+                >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}Id: {0}  state: {1}">
+                                    <Binding Path="Id" />
+                                    <Binding Path="ThreadState" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Label Content="Selected process's threads" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Top" 
+                   Width="156"
+                   Visibility="{Binding IsListBoxThreadsVisible, 
+                                Converter={StaticResource boolToVisOfLiBoxThreadsConverter}, 
+                                Source={StaticResource vm}}"
+                   /> 
+        </Grid>
+        <Grid></Grid>
     </DockPanel>
 </Window>
