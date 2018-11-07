@@ -35,8 +35,6 @@ namespace TaskManager.ViewModels
 
     public class ManagedProcessesViewModel : INotifyPropertyChanged
     {
-        static string FileNameProc;
-
         private Dictionary<int, string> DictForRecoveringProcesses { get; set; }
         public ObservableCollection<Process> ManagedProcesses { get; set; }
 
