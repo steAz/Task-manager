@@ -95,6 +95,9 @@
     <Compile Include="CommandControl.xaml.cs">
       <DependentUpon>CommandControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ListUC.xaml.cs">
+      <DependentUpon>ListUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ManagingProcessesWindow.xaml.cs">
       <DependentUpon>ManagingProcessesWindow.xaml</DependentUpon>
     </Compile>
@@ -104,6 +107,10 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="CommandControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -21,6 +21,7 @@ namespace TaskManager.ViewModels
     public class ChangePriorityConverter : IMultiValueConverter
     {
 
+
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             return values.Clone();
@@ -34,7 +35,9 @@ namespace TaskManager.ViewModels
 
     public class ManagedProcessesViewModel : INotifyPropertyChanged
     {
+        static string FileNameProc;
 
+        private Dictionary<int, string> DictForRecoveringProcesses { get; set; }
         public ObservableCollection<Process> ManagedProcesses { get; set; }
 
         public ObservableCollection<Process> DeletedProcesses { get; set; }
@@ -117,6 +120,7 @@ namespace TaskManager.ViewModels
         {
             this.ManagedProcesses = new ObservableCollection<Process>();
             this.DeletedProcesses = new ObservableCollection<Process>();
+            this.DictForRecoveringProcesses = new Dictionary<int, string>();
             CreateDeleteProcessCommand();
             CreateRecoverProcessCommand();
             CreateChangePriorityCommand();
@@ -139,6 +143,8 @@ namespace TaskManager.ViewModels
                 }
             }
             ManagedProcesses.Add(addingMessage.process);
+            InfoLabel = "Added process.";
+            IsLabelInfoVisible = true;
             IsDeleteProcessesButtonVisible = true;
         }
 
@@ -154,7 +160,10 @@ namespace TaskManager.ViewModels
                 this.ManagedProcesses.Remove(deletingMessage.process);
                 this.DeletedProcesses.Add(deletingMessage.process);
                 IsRecoverProcessesButtonVisible = true;
+                var fileNameOfDeletedProcess = deletingMessage.process.MainModule.FileName;
                 deletingMessage.process.Kill();
+                deletingMessage.process.WaitForExit();
+                this.DictForRecoveringProcesses.Add(deletingMessage.process.Id, fileNameOfDeletedProcess);
 
                 var logInfo = string.Format("Deleted process: {0}",
                                     deletedProcessName);
@@ -168,6 +177,8 @@ namespace TaskManager.ViewModels
                     logInfo += string.Format(" with working set 64: {0}", workingSet64OfDeletedProc.ToString());
                 File.AppendAllText(@"..\..\DeleteLogs.txt", logInfo + Environment.NewLine);
                 Messenger.Default.Send<LoadingOnRequestMessage>(new LoadingOnRequestMessage());
+                InfoLabel = "Deleted process.";
+                IsLabelInfoVisible = true;
             }
             catch (Win32Exception)
             {
@@ -181,18 +192,35 @@ namespace TaskManager.ViewModels
 
         private void RecoveringProcessFromDeletedCol(RecoveringMessage recoveringMessage)
         {
-            
             try
             {
-                recoveringMessage.process.Start();
+                var processStartInfo = new ProcessStartInfo();
+                foreach (var item in this.DictForRecoveringProcesses)
+                {
+                    if (item.Key == recoveringMessage.process.Id)
+                    {
+                        processStartInfo.FileName = item.Value;
+                        break;
+                    }
+                }
                 this.DeletedProcesses.Remove(recoveringMessage.process);
+                Process.Start(processStartInfo);      
+                OnPropertyChanged("DeletedProcesses");
+                InfoLabel = "Restarted process.";
+                IsLabelInfoVisible = true;
             }
             catch(InvalidOperationException)
             {
                 InfoLabel = "It is needed to add name of file to start process.";
                 IsLabelInfoVisible = true;
             }
-            
+            catch (Win32Exception)
+            {
+                InfoLabel = "Cannot restart this process.";
+                IsLabelInfoVisible = true;
+            }
+
+           
         }
 
         private void ChangingProcessPriorityFromManagedCol(ChangingPriorityMessage changingPriorMessage)

@@ -22,6 +22,7 @@
                      Margin="14,28,10,15" 
                      IsSynchronizedWithCurrentItem="true">
             </ListBox>
+            
         </Grid>
         <Grid Width="371" >
             <Grid.Resources>

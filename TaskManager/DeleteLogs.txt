@@ -11,3 +11,13 @@ Deleted process: AppleMobileDeviceService with ID: 6896 with priority class: Nor
 Deleted process: AppleMobileDeviceService with ID: 7588 with priority class: Normal
 Deleted process: AppleMobileDeviceService
 Deleted process: chrome
+Deleted process: ibtsiva with ID: 3096 with base priority: Normal
+Deleted process: CCleaner64 with priority class: Normal with base priority: Normal with working set 64: 901120
+Deleted process: CCleaner64 with ID: 9492 with priority class: Normal with base priority: Normal with working set 64: 753664
+Deleted process: SkypeApp
+Deleted process: CCleaner64 with ID: 9060 with priority class: Normal with working set 64: 888832
+Deleted process: PLAY INTERNET with ID: 3860 with base priority: BelowNormal
+Deleted process: PLAY INTERNET with ID: 10028 with base priority: Idle
+Deleted process: PLAY INTERNET with ID: 10552 with priority class: High with base priority: High with working set 64: 2220032
+Deleted process: PLAY INTERNET with ID: 6140 with priority class: High with working set 64: 68042752
+Deleted process: PLAY INTERNET with ID: 6400 with priority class: High with working set 64: 2748416
